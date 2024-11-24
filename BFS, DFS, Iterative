@@ -1,0 +1,114 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+// Function to add an edge to the graph
+void add_edge(vector<vector<int>> &graph, int u, int v) {
+    graph[u].push_back(v); // Add v to u's adjacency list
+    graph[v].push_back(u); // Add u to v's adjacency list (for undirected graph)
+}
+
+// Breadth-First Search (BFS)
+void bfs(vector<vector<int>> &graph) {
+    int start = 0; // Starting node
+    unordered_map<int, bool> is_visited; // Visited map
+    queue<int> q;
+
+    q.push(start);
+    is_visited[start] = true;
+
+    cout << "BFS Traversal: ";
+    while (!q.empty()) {
+        int node = q.front();
+        q.pop();
+        cout << node << " ";
+
+        for (auto neighbor : graph[node]) {
+            if (!is_visited[neighbor]) {
+                q.push(neighbor);
+                is_visited[neighbor] = true;
+            }
+        }
+    }
+    cout << endl;
+}
+
+// Depth-First Search (DFS) - Recursive
+void dfs_recursive(vector<vector<int>> &graph, int start, vector<bool> &is_visited) {
+    is_visited[start] = true;
+    cout << start << " ";
+
+    for (auto neighbor : graph[start]) {
+        if (!is_visited[neighbor]) {
+            dfs_recursive(graph, neighbor, is_visited);
+        }
+    }
+}
+
+// Depth-First Search (DFS) - Iterative
+void dfs_iterative(vector<vector<int>> &graph, int start) {
+    vector<bool> is_visited(graph.size(), false); // Visited array
+    stack<int> s;                                // Stack for iterative DFS
+
+    s.push(start); // Start from the given node
+
+    cout << "Iterative DFS Traversal: ";
+    while (!s.empty()) {
+        int node = s.top();
+        s.pop();
+
+        // If the node has not been visited yet
+        if (!is_visited[node]) {
+            cout << node << " ";
+            is_visited[node] = true;
+
+            // Push all unvisited neighbors to the stack
+            for (auto neighbor = graph[node].rbegin(); neighbor != graph[node].rend(); ++neighbor) {
+                if (!is_visited[*neighbor]) {
+                    s.push(*neighbor);
+                }
+            }
+        }
+    }
+    cout << endl;
+}
+
+int main() {
+    int vertices = 7; // Number of vertices
+    int edges = 8;    // Number of edges
+
+    vector<vector<int>> graph(vertices);
+
+    // Adding edges to the graph
+    add_edge(graph, 0, 1);
+    add_edge(graph, 0, 2);
+    add_edge(graph, 1, 2);
+    add_edge(graph, 2, 3);
+    add_edge(graph, 3, 4);
+    add_edge(graph, 4, 5);
+    add_edge(graph, 5, 6);
+    add_edge(graph, 6, 0);
+
+    // Printing the adjacency list representation of the graph
+    cout << "Adjacency List Representation:" << endl;
+    for (int i = 0; i < vertices; i++) {
+        cout << "Vertex " << i << ": ";
+        for (int neighbor : graph[i]) {
+            cout << neighbor << " ";
+        }
+        cout << endl;
+    }
+
+    // BFS Traversal
+    bfs(graph);
+
+    // Recursive DFS Traversal
+    vector<bool> is_visited(vertices, false);
+    cout << "Recursive DFS Traversal: ";
+    dfs_recursive(graph, 0, is_visited);
+    cout << endl;
+
+    // Iterative DFS Traversal
+    dfs_iterative(graph, 0);
+
+    return 0;
+}
