@@ -1,0 +1,77 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+// Function to add an edge to the graph with weights
+void add_edge(vector<vector<pair<int, int>>> &graph, int u, int v, int weight) {
+    graph[u].push_back({v, weight}); // Add edge u -> v with weight
+    graph[v].push_back({u, weight}); // Add edge v -> u with weight (for undirected graph)
+}
+
+// Best First Search
+void best_first_search(vector<vector<pair<int, int>>> &graph, int start, int goal) {
+    // Priority queue: (cost, node). Min-heap based on cost.
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+
+    vector<bool> visited(graph.size(), false); // Visited array
+
+    pq.push({0, start}); // Push the start node with a cost of 0
+
+    cout << "Best First Search Traversal: ";
+
+    while (!pq.empty()) {
+       // auto [cost, node] = pq.top();
+        auto cost=pq.top().first;
+        auto node=pq.top().second;
+        pq.pop();
+
+        // Skip already visited nodes
+        if (visited[node]) continue;
+
+        visited[node] = true;
+        cout << node << " ";
+
+        // If the goal is reached, stop the search
+        if (node == goal) break;
+
+        // Add neighbors to the priority queue
+        for (auto &[neighbor, weight] : graph[node]) {
+            if (!visited[neighbor]) {
+                pq.push({weight, neighbor}); // Push with priority as the edge weight
+            }
+        }
+    }
+    cout << endl;
+}
+
+int main() {
+    int vertices = 7; // Number of vertices
+
+    // Graph with weighted edges
+    vector<vector<pair<int, int>>> graph(vertices);
+
+    // Adding edges with weights
+    add_edge(graph, 0, 1, 2);
+    add_edge(graph, 0, 2, 4);
+    add_edge(graph, 1, 2, 1);
+    add_edge(graph, 1, 3, 7);
+    add_edge(graph, 2, 4, 3);
+    add_edge(graph, 3, 5, 1);
+    add_edge(graph, 4, 5, 2);
+    add_edge(graph, 5, 6, 5);
+
+    // Printing the adjacency list representation of the graph
+    cout << "Adjacency List Representation (node: weight):" << endl;
+    for (int i = 0; i < vertices; i++) {
+        cout << "Vertex " << i << ": ";
+        for (auto &[neighbor, weight] : graph[i]) {
+            cout << "(" << neighbor << ": " << weight << ") ";
+        }
+        cout << endl;
+    }
+
+    // Perform Best First Search
+    int start = 0, goal = 2; // Start and goal nodes
+    best_first_search(graph, start, goal);
+
+    return 0;
+}
